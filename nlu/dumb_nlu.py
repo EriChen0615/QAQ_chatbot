@@ -55,7 +55,7 @@ class Dumb_NLU(NLU):
         no_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'no')))
         na_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'nah')))
         not_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'not')))
-        l = no_list + na_list + not_list
+        l = list(no_list) + list(na_list) + list(not_list)
         for i in l:
             if i in text:
                 return 'no'
