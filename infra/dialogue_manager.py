@@ -45,6 +45,7 @@ class DialogueManager(Component):
         self.filename = '../data/cnc_troubleshooting.xlsx'
         self.df = self.excel_to_df()
         self.df_stats = []
+        self.msg=""
 
     def setup(self):
         pass
@@ -108,6 +109,7 @@ class DialogueManager(Component):
             response_msg = self.solution_provider()
         self.output = response_msg
         print(response_msg)#, self.state_counter, self.state)
+        self.msg=response_message
         self.last_state = self.state
         if self.state=="yes":
             self.__init__()
@@ -242,6 +244,7 @@ def mergeprocess(nlu, m, text):
     #print(input)
     m.input_debug(input)
     m.run()
+    return m.msg
 
 if __name__ == '__main__':
     """
