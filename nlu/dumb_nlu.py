@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 import itertools
+import re
 
 class Dumb_NLU(NLU):
 
@@ -62,8 +63,7 @@ class Dumb_NLU(NLU):
 
     def process(self, text):
 
-        text = text.replace(".","")
-        text = text.replace(",","")
+        text = re.sub(r'[^\w\s]', '', text)
 
         stemmer = SnowballStemmer(language='english')
         split_text = text.split(' ')
