@@ -3,11 +3,10 @@
 
 
 import pandas as pd
-import spacy
 from nltk.stem.snowball import SnowballStemmer
 
 
-df = pd.read_csv('error_kws.csv')
+df = pd.read_csv('error_keywords_1.csv')
 
 df
 
@@ -24,9 +23,6 @@ for index, row in df.iterrows():
 key_words
 
 p_mat = pd.DataFrame({e: [0]*len(key_words) for e in df['Trouble']}, dtype=float)
-
-nlp = spacy.load('en_core_web_sm')
-lemmatizer = nlp.vocab.morphology.lemmatizer
 
 stemmer = SnowballStemmer(language='english')
 # stemmer = PorterStemmer()
@@ -49,5 +45,5 @@ p_mat
 import seaborn as sns
 
 hm = sns.heatmap(p_mat)
-
-p_mat.to_csv('word_error_mat.csv')
+print(p_mat.shape)
+# p_mat.to_csv('word_error_mat.csv')

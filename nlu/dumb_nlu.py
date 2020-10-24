@@ -1,48 +1,67 @@
 import sys
 
-from nltk import PorterStemmer
-
 sys.path.append('..')
 from infra.nlu import NLU
-import re
-import spacy
 import numpy as np
 import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 
 class Dumb_NLU(NLU):
 
+    def makeErrorPartList(self):
+        csvfilepath = '../data/error_keywords_1.csv'
+        error_part_list = pd.read_csv(csvfilepath, sep=",", usecols=[2]).values.tolist()
+        self.error_part_list = [item for sublist in error_part_list for item in sublist]
+        print(self.error_part_list)
+        print(len(self.error_part_list))
+
+    def makeErrorList(self):
+        csvfilepath = '../data/error_keywords_1.csv'
+        error_list = pd.read_csv(csvfilepath, sep=",",header=None, usecols=[3]).values.tolist()
+        error_list = [item for sublist in error_list for item in sublist]
+        self.error_list = error_list[1:len(error_list)]
+        print(self.error_list)
+        print(len(self.error_list))
+
+    def makeProbabilityMatrix(self):
+        csvfilepath = "../data/word_error_mat.csv"
+        self.probability_matrix = np.loadtxt(open(csvfilepath, "rb"), delimiter=",", skiprows=1, usecols=range(1, 28))
+        print(self.probability_matrix)
+        print(self.probability_matrix.shape)
+
+    def makeKeywordList(self):
+        csvfilepath = '../data/word_error_mat.csv'
+        keyword_list = pd.read_csv(csvfilepath, sep=",", usecols=[0]).values.tolist()
+        self.keyword_list = [item for sublist in keyword_list for item in sublist]
+        print(self.keyword_list)
+        print(len(self.keyword_list))
+
     def setup(self):
         print(f"{self.name} is setup")
+        self.error_part_list = []
+        self.error_list = []
+        self.probability_matrix = []
+        self.keyword_list = []
 
-    def process(self):
-        # num = re.search(r'\d+', self.text).group(0)
-        # intent = re.search(r'hello', self.text).group(0)
+        self.makeErrorPartList()
+        self.makeErrorList()
+        self.makeProbabilityMatrix()
+        self.makeKeywordList()
 
-        text = self.text
+    def process(self, text):
+
         text = text.replace(".","")
         text = text.replace(",","")
 
-        nlp = spacy.load('en_core_web_sm')
-        lemmatizer = nlp.vocab.morphology.lemmatizer
         stemmer = SnowballStemmer(language='english')
         split_text = text.split(' ')
         stemmed_text_list = []
         for word in split_text:
             stemmed_text_list.append(stemmer.stem(word.lower()))
 
-        # load word_error_mat file to a matrix
-        csvfilepath = "../data/word_error_mat.csv"
-        probability_matrix = np.loadtxt(open(csvfilepath, "rb"), delimiter=",", skiprows=1, usecols=range(1,28))
-
-        error_list = pd.read_csv(csvfilepath, sep=",",header=None, nrows=1).values.tolist()
-        error_list = [item for sublist in error_list for item in sublist]
-        error_list = error_list[1:len(error_list)]
-        keyword_list = pd.read_csv(csvfilepath, sep=",",usecols=[0]).values.tolist()
-        flat_keyword_list = [item for sublist in keyword_list for item in sublist]
 
         num_stemmed_text_list = []
-        for keyword in flat_keyword_list:
+        for keyword in self.keyword_list:
             if keyword in stemmed_text_list:
                 num_stemmed_text_list.append(1)
             else:
@@ -50,7 +69,8 @@ class Dumb_NLU(NLU):
 
         num_stemmed_text_list = np.reshape(num_stemmed_text_list, (1, 46))
 
-        result_list = num_stemmed_text_list.dot(probability_matrix)
+        result_list = num_stemmed_text_list.dot(self.probability_matrix)
+        print(result_list.shape)
 
 
         maximum = np.max(result_list)
@@ -58,16 +78,19 @@ class Dumb_NLU(NLU):
         error_id = np.where(result_list == maximum)
         error_id_list = [int(item) for sublist in error_id for item in sublist]
 
+        result_part_list = []
         result_error_list = []
 
         for id in error_id_list:
-            result_error_list.append(error_list[id])
+            result_part_list.append(self.error_part_list[id])
+            result_error_list.append(self.error_list[id])
 
         print(result_error_list)
-        return result_error_list
+        print(result_part_list)
+        return result_error_list,result_part_list
         # return {'number':num, 'intent':intent}
 
 
 test = Dumb_NLU()
-test.text = 'The change 4 noise milling is not working.,,,'
-test.process()
+text = 'The change 4 noise milling is not working.,,,'
+test.process(text)
