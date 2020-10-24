@@ -1,7 +1,6 @@
 from .component import Component
-from .tracker import Tracker
-from .agent import Agent
 import pandas as pd
+
 
 class DialogueManager(Component):
 
@@ -46,11 +45,12 @@ class DialogueManager(Component):
     def to_front(self, action):
         return {'response': action['response'], 'browser_action': 'reply'}
 
-    def greeting():
+    def greeting(self):
         return "Hello, how can I help you?"
 
     def thanks(self):
-        self.df[self.df_stats[self.state_counter]]["appear_time"] = df[self.df_stats[self.state_counter]]["appear_time"] + 1
+        self.df[self.df_stats[self.state_counter]]["appear_time"] = df[self.df_stats[self.state_counter]][
+                                                                        "appear_time"] + 1
         df
         # self.init()
         return "My pleasure"
@@ -67,13 +67,12 @@ class DialogueManager(Component):
             #return "Is it one of the following:"+.join{df.["parts"]}
         if part!=None and trouble==None:
         """
-        df_stats=self.get_solution(part, trouble)
+        df_stats = self.get_solution(part, trouble)
         if part == None or trouble == None:
             return "I'm sorry, I couldn't understand. Good luck :-D"
         self.state_counter = self.statecounter + 1
-        df_stats=get_solution(part, trouble)
+        df_stats = get_solution(part, trouble)
         return df_stats([self.state_counter - 1])
-
 
     def excel_to_df(self):
         return pd.read_excel(self.file_path, 0)
@@ -81,19 +80,20 @@ class DialogueManager(Component):
     def read_sorted_solution(self, df, part, error):
         df = df.loc[(df['Parts'] == part) & (df['Error'] == error)]
         df = df.sort_values('appear_time')
-        #print(df)
+        # print(df)
         solutions = df.Solution.tolist()
         return solutions[::-1]
 
-    def get_solutions(self,part, error):
+    def get_solutions(self, part, error):
         """
         Look for possible solutions from database
         :return:
             A list of solutions based on given part and error from most frequent to least frequent.
         """
         return read_sorted_solution(self.df, part, error)
-    
-if __name__=='__main__':
+
+
+if __name__ == '__main__':
     filename = '../doc/cnc_troubleshooting.xlsx'
     part = 'Tool magazine(Umbrella type)'
     error = 'Noise for tool changing'
