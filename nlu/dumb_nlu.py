@@ -5,6 +5,7 @@ from infra.nlu import NLU
 import numpy as np
 import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
+import itertools
 
 class Dumb_NLU(NLU):
 
@@ -48,6 +49,17 @@ class Dumb_NLU(NLU):
         self.makeProbabilityMatrix()
         self.makeKeywordList()
 
+    def get_intent(self, text):
+        # define yes/no
+        no_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'no')))
+        na_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'nah')))
+        not_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'not')))
+        l = no_list + na_list + not_list
+        for i in l:
+            if i in text:
+                return 'no'
+        return 'yes'
+
     def process(self, text):
 
         text = text.replace(".","")
@@ -85,9 +97,10 @@ class Dumb_NLU(NLU):
             result_part_list.append(self.error_part_list[id])
             result_error_list.append(self.error_list[id])
 
-        print(result_error_list)
-        print(result_part_list)
-        return result_error_list,result_part_list
+        # print(result_error_list)
+        # print(result_part_list)
+        intention = self.get_intent(text)
+        return {'error': result_error_list, 'part': result_part_list, 'intent': intention}
         # return {'number':num, 'intent':intent}
 
 
