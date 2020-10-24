@@ -4,10 +4,8 @@
 
 import pandas as pd
 import spacy
-import nltk
 from nltk.stem.snowball import SnowballStemmer
 
-from nltk.stem.porter import *
 
 df = pd.read_csv('error_kws.csv')
 
