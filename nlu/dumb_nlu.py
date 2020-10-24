@@ -1,14 +1,14 @@
 import sys
+sys.path.append('..')
 
 from nltk import PorterStemmer
-
-sys.path.append('..')
 from infra.nlu import NLU
 import re
 import spacy
 import numpy as np
 import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
+
 
 class Dumb_NLU(NLU):
 
@@ -23,8 +23,8 @@ class Dumb_NLU(NLU):
         text = text.replace(".","")
         text = text.replace(",","")
 
-        nlp = spacy.load('en_core_web_sm')
-        lemmatizer = nlp.vocab.morphology.lemmatizer
+        # nlp = spacy.load('en_core_web_sm')
+        # lemmatizer = nlp.vocab.morphology.lemmatizer
         stemmer = SnowballStemmer(language='english')
         split_text = text.split(' ')
         stemmed_text_list = []
@@ -63,11 +63,11 @@ class Dumb_NLU(NLU):
         for id in error_id_list:
             result_error_list.append(error_list[id])
 
-        print(result_error_list)
+        # print(result_error_list)
         return result_error_list
         # return {'number':num, 'intent':intent}
 
 
-test = Dumb_NLU()
-test.text = 'The change 4 noise milling is not working.,,,'
-test.process()
+# test = Dumb_NLU()
+# test.text = 'The change 4 noise milling is not working.,,,'
+# test.process()

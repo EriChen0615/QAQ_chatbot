@@ -1,5 +1,4 @@
 import sys
-sys.path.append('..')
 from infra.user_interface import UserInterface
 
 class CLI_Interface(UserInterface):

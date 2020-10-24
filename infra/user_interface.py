@@ -8,14 +8,15 @@ class UserInterface(Component):
         raise NotImplementedError
 
     def do_step(self):
-        self.display()
+        self.display('Hi! How can I help?')
         self.output = self.read()
-
+        
+        
     @abstractmethod
     def read(self):
         raise NotImplementedError
 
     @abstractmethod
-    def display(self):
+    def display(self, text):
         raise NotImplementedError
 
