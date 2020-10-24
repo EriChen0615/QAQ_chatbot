@@ -1,10 +1,10 @@
-from infra.component import Component
+from .component import Component
 import pandas as pd
 import numpy as np
 
 class DialogueManager(Component):
 
-    def __init__(self, imput):
+    def __init__(self,):# imput):
         super().__init__()
         # self.tracker = tracker
         # self.agent = agent
@@ -16,12 +16,12 @@ class DialogueManager(Component):
 
         ["state=greeting, abort, thanks, problem, yes, no"]
         """
-        self.input = imput
+        #self.input = imput
         self.setup1()
         self.last_state = None
         # self.learnparameter=1
         self.state_counter = 0
-        self.filename = 'doc/cnc_troubleshooting.xlsx'
+        self.filename = '..doc/cnc_troubleshooting.xlsx'
         self.df = self.excel_to_df()
         self.df_stats = self.get_solutions(self.part, self.trouble)
 
@@ -47,13 +47,13 @@ class DialogueManager(Component):
         if self.state == "greeting":
             response_msg = self.greeting()
         elif self.state == "thanks":
-            print(1111)
+            #print(1111)
             response_msg = self.thanks()
 
         elif self.state == "trouble" or "yes" or "no":
             response_msg = self.trouble_shooting()
         self.output = response_msg
-        print(response_msg, self.state_counter, self.state)
+        #print(response_msg, self.state_counter, self.state)
         self.last_state = self.state
 
     def to_front(self, action):
@@ -63,7 +63,7 @@ class DialogueManager(Component):
         return "Hello, how can I help you?"
 
     def thanks(self):
-        print(self.part, self.trouble, self.state_counter)
+        #print(self.part, self.trouble, self.state_counter)
         i = 0
         while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.trouble or self.df.loc[
             i, 'Solution'] != self.df_stats[self.state_counter - 1]:
