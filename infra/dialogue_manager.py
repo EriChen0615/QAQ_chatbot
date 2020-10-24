@@ -1,6 +1,6 @@
 from infra.component import Component
 import pandas as pd
-
+import numpy as np
 
 class DialogueManager(Component):
 
@@ -21,7 +21,7 @@ class DialogueManager(Component):
         self.last_state = None
         # self.learnparameter=1
         self.state_counter = 0
-        self.filename = '../doc/cnc_troubleshooting.xlsx'
+        self.filename = 'doc/cnc_troubleshooting.xlsx'
         self.df = self.excel_to_df()
         self.df_stats = self.get_solutions(self.part, self.trouble)
 
@@ -51,7 +51,7 @@ class DialogueManager(Component):
             response_msg = self.thanks()
 
         elif self.state == "trouble" or "yes" or "no":
-            response_msg = self.trouble_shooting(self.part, self.trouble)
+            response_msg = self.trouble_shooting()
         self.output = response_msg
         print(response_msg, self.state_counter, self.state)
         self.last_state = self.state
@@ -72,27 +72,40 @@ class DialogueManager(Component):
         self.df.to_excel(self.filename, sheet_name='Sheet1', index=False, header=True)
 
         self.df.to_excel(self.filename)
-        # self.init()
-
+        #self.__init__()
         return "My pleasure"
 
-    def trouble_shooting(self, part, trouble):
+    def trouble_shooting(self):
         """
-        if part==None:
-            for candidate in df_manual:
-                if candidate not in self.part:
-                    self.part.append(candidate)
-                    return "I'm sorry. Do you mean there is a problem in"+candidate+"?"
-                    break
-                return "I'm sorry, I don't know other parts"
-            #return "Is it one of the following:"+.join{df.["parts"]}
-        if part!=None and trouble==None:
+        Intellegent: if one field is empty but only one candidate, can autofill
+        gives suggestions based on historical features
+        feature to be added: 1. suggestions refer to online forum
+        feature to be tested:1. add customized measurements
         """
 
-        if part is None or trouble is None:
+        if self.part is None or self.trouble is None:
             return "I'm sorry, I couldn't understand. Good luck :-D"
-        self.state_counter = self.state_counter + 1
-        return self.df_stats[self.state_counter - 1]
+        elif self.part is None:
+            candidates=self.df.loc[(self.df['Error'] == self.trouble)]
+            candidates=candidates.Parts.tolist()
+            if len(candidates)==1:
+                self.part=candidates[0]
+                self.do_step()
+                return 0
+            else:
+                return "Which part has problem? Is it"+','.join(candidates)+"?"
+        elif self.trouble is None:
+            candidates = self.df.loc[(self.df['Parts'] == self.part)]
+            candidates = candidates.Errors.tolist()
+            if len(candidates) == 1:
+                self.trouble = candidates[0]
+                self.do_step()
+                return 0
+            else:
+                return "What's the problem with"+self.part+"?Is it"+','.join(candidates)+"?"
+        else:
+            self.state_counter = self.state_counter + 1
+            return self.df_stats[self.state_counter - 1]
 
     def excel_to_df(self):
         return pd.read_excel(self.filename, 0)
@@ -112,6 +125,19 @@ class DialogueManager(Component):
         """
         return self.read_sorted_solution(self.df, part, error)
 
+    def study(self, part, trouble, new_solution):
+        """
+        Add a new solution from user feedback if all the possible solutions are declined.
+        """
+        df = pd.read_excel(self.filename, 0)
+        i = 0
+        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.trouble or self.df.loc[
+            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
+            i += 1
+
+        pd.DataFrame(np.insert(df.values, i + 1, values=[part, trouble, new_solution, 0], axis=0))
+
+        df.to_excel(self.filename)
 
 if __name__ == '__main__':
     input = {"parts": "Tool magazine(Umbrella type)", "trouble": "Noise for tool changing", "states": "trouble"}
