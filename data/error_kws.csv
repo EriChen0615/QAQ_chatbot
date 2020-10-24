@@ -1,0 +1,29 @@
+No,Part,Trouble,Key_word,Umbrella,noise
+1,Tool magazine (Umbrella type),Noise for tool changing,"Umbrella, noise, change",1/5,1/4
+,,Can't change the tool,"Umbrella, change, tool",1/5,0
+,,Tool number in chaos,"Umbrella, tool, number, chaos",1/5,0
+,,Tool magazine keep rotation,"Umbrella, rotation",1/5,0
+,,Tool magazine not drawing back,"Umbrella, tool, magazine, draw, back",1/5,0
+2,Tool magazine (Arm type),Noise for tool changing,"Arm, noise, tool, change",0,1/4
+,,can't change to tool,"Arm, change, tool",0,0
+,,tool magazine not drawing back,"Arm, tool, magazine, draw, back",0,0
+3,Axis Trouble ,over limited,"Axis, limit",0,0
+,,can't back to zero ,"axis, zero",0,0
+,,noise for axis ,"axis, noise",0,1/4
+4,Spindle trouble ,spindle noise,"spindle, noise",0,1/4
+5,coolant pump trouble ,can't drain,"coolant, pump, drain",0,0
+6,lubrication pump trouble ,lubrication pump trouble ,"lubrication, pump, trouble",0,0
+7,tool not inposition,tool magazine is not positioned and could not get the sensor signal ,"tool, position, sensor, signal",0,0
+8,tool number not found ,cannot find the tool number ,"tool, number, find",0,0
+9,tool pot not down ,tool collets cannot go down,"tool, pot, collects, down",0,0
+10,arm 90 error,arm 90 degree error,"arm, 90, error",0,0
+11,tool not unclamp,tool unclamp ,"tool, unclamp",0,0
+12,arm 270 error,arm 270 degree error,"arm, 270, error",0,0
+13,tool pot not up,tool collets cannot go upward,"tool, pot, collects, up, upwards",0,0
+14,arm jog mode,arm jog mode error,"arm, jog, mode",0,0
+15,tool not clamp,tool is not clamp well,"tool, clamp",0,0
+16,arm home pos error,arm home point error,"arm, home, pos, point",0,0
+17,atc ls error,atc limit error,"atc, limit, error",0,0
+18,t code = sp,tcode = spindle tool,"tcode, spindle, tool",0,0
+19,door not close,door is not close ,"door, close",0,0
+20,4 axis clamp,the 4th axis is not clamp ,"4, axis, clamp",0,0

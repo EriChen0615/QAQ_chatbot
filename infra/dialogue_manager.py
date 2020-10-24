@@ -92,7 +92,7 @@ class DialogueManager(Component):
             A list of solutions based on given part and error from most frequent to least frequent.
         """
         return read_sorted_solution(self.df, part, error)
-    
+
 if __name__=='__main__':
     filename = '../doc/cnc_troubleshooting.xlsx'
     part = 'Tool magazine(Umbrella type)'
