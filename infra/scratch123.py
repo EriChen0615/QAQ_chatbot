@@ -14,21 +14,32 @@ feature to be tested:1. add customized measurements
 
 class DialogueManager(Component):
 
-    def __init__(self, imput):
+    def __init__(self):
+        """
+        create a Dialogue Manager object
+        :param
+        :attributes
+        input: get input from nlu
+                input is a dictionary with three attributes: parts, trouble, states
+                states[trouble=detect parts/trouble, yes/no=feedback from the user for the validity of the solution]
+        setup1: transfer input to inner attributes(see function)
+        last_state, state: None, trouble(to identify the problem), yes(we're done!), or no(the pass the next solution)
+        state_counter: count how many states has been provided but failed
+        filename: fixed variable for file path
+        df: dataframe to the data file
+        df_stats: a list of solutions, ranked based on success frequency
+
+        :return None
+        """
         super().__init__()
         # self.tracker = tracker
         # self.agent = agent
         # self.tracker.connect(agent)
-        """
-        input type:
 
-        ["parts"], ["trouble"], ["states"]
-
-        ["state=greeting, abort, thanks, problem, yes, no"]
-        """
-        self.input = imput
+        self.input = None
         self.setup1()
         self.last_state = None
+        self.state=None
         # self.learnparameter=1
         self.state_counter = 0
         self.filename = 'doc/cnc_troubleshooting.xlsx'
@@ -39,11 +50,19 @@ class DialogueManager(Component):
         pass
 
     def setup1(self):
+        """
+        deal with input and update existing variables.
+        if input contains an previously unknown attribute, then update the attribute
+        else, create a placeholder/leave nothing
+        DO NOT PERFORM COLLISION DETECTION: will keep the newest valid solution
+        :return: None
+        """
         # print("Dialogue Manager is setup!")
         if self.input["parts"]!=None:
             self.part = self.input["parts"]
         if self.input["trouble"] != None:
             self.trouble = self.input["trouble"]
+        self.last_state=self.state
         self.state = self.input["states"]
         try:
             self.part
@@ -55,30 +74,63 @@ class DialogueManager(Component):
             self.trouble=None
 
     def input_debug(self, intm):
+        """
+        for debug and using the object as a function
+        e.g. object.input_debug(<input dictionary>)
+             get_result=object.do_step()
+        :param intm: input
+        :return: none
+        """
         self.input = intm
         self.setup1()
+        return 0
 
     def do_step(self):
         # self.tracker.input = self.input
         # self.tracker.run()
         # self.agent.run()
-        if self.state == "greeting":
-            response_msg = self.greeting()
-        elif self.state == "thanks":
-            response_msg = self.thanks()
-        elif self.state == "trouble" or "yes" or "no":
+        #if self.state == "greeting":
+        #    response_msg = self.greeting()
+        #elif self.state == "thanks":
+        #    response_msg = self.thanks()
+        """
+        the main control of the program
+        If either part is missing, request user to describe the problem using trouble_shooting
+        If both parts are presented, provide the solution by solution_provider()
+            (if problem solved, it will jump to thanks() as indicated in the solution_provider())
+        Additionally, if it is "yes", case closed and object inits itself.
+        :return: response_msg to the UI
+        """
+        if self.part==None or self.trouble==None:
             response_msg = self.trouble_shooting()
+        else:
+            response_msg = self.solution_provider()
         self.output = response_msg
         print(response_msg)#, self.state_counter, self.state)
         self.last_state = self.state
+        if self.state=="yes":
+            self.__init__()
+        return response_msg
 
     def to_front(self, action):
+        """
+        aborted!
+        """
         return {'response': action['response'], 'browser_action': 'reply'}
 
     def greeting(self):
+        """
+        Aborted! Replaced by greeting in UI
+        :return:
+        """
         return "Hello, how can I help you?"
 
     def thanks(self):
+        """
+        Run this function when the user solved the problem
+        Update the methods on a sheet
+        :return: Answer politely with a speck of pride. Our chatbot is well-educated gentleman/lady
+        """
         #print(self.part, self.trouble, self.state_counter)
         i = 0
         while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.trouble or self.df.loc[
@@ -93,13 +145,16 @@ class DialogueManager(Component):
 
     def trouble_shooting(self):
         """
+        Try to find some information form our poor dumb master. Hopefully he/she will say something reasonable
+        :return: if none of "parts" and "trouble" is understood, give it another try (or am I)?
+                if one part is missing: list all I know that fits another parameter. That's the best I can do.
+                hope there is something for my poor master
+        """
+        """
         Intellegent: if one field is empty but only one candidate, can autofill
         gives suggestions based on historical features
         feature to be added: 1. suggestions refer to online forum
         feature to be tested:1. add customized measurements
-        """
-        """
-        Additional work: single variable take multiple choice
         """
         if self.part is None and self.trouble is None:
             return "I'm sorry, I couldn't understand. Good luck :-D"
@@ -111,7 +166,7 @@ class DialogueManager(Component):
                 self.do_step()
                 return 0
             else:
-                return "Which part has problem? Is it"+','.join(candidates)+"?"
+                return "Which part has this problem? Is it"+','.join(candidates)+"?"
         elif self.trouble is None:
             candidates = self.df.loc[(self.df['Parts'] == self.part)]
             candidates = candidates.Error.tolist()
@@ -123,15 +178,35 @@ class DialogueManager(Component):
             else:
                 return "What's the problem with"+self.part+"? Is "+', '.join(candidates)+"?"
         else:
+            return
+
+    def solution_provider(self):
+        """
+        Solution time!
+        Trace how many solutions I have provided and provide the next possible solution based on the knowledge.
+        If there's no more I can provide, sorry!
+        If my master solved the problem, hooray! Jump to the wrap up thanks()
+        :return: solution!
+        """
+        if self.state=="trouble" or self.state=="no":
             self.df_stats = self.get_solutions(self.part,self.trouble)
             self.state_counter = self.state_counter + 1
             #print(self.trouble, self.part, self.state_counter, self.df_stats)
+            if self.state_counter>len(self.df_stats):
+                return "Sorry, it is beyond my scope."###provide user-defined manual
             return self.df_stats[self.state_counter - 1]
+        elif self.state=="yes":
+            return self.thanks()
 
     def excel_to_df(self):
+        """
+        as indicated
+        :return:
+        """
         return pd.read_excel(self.filename, 0)
 
     def read_sorted_solution(self, df, part, error):
+        """read file"""
         df = df.loc[(df['Parts'] == part) & (df['Error'] == error)]
         df = df.sort_values('appear_time')
         # print(df)
@@ -161,6 +236,10 @@ class DialogueManager(Component):
         df.to_excel(self.filename)
 
 if __name__ == '__main__':
+    """
+    input is a dictionary with three attributes: parts, trouble, states
+    states[trouble=detect parts/trouble, yes/no=feedback from the user for the validity of the solution]
+    """
     input = {"parts": None, "trouble": "Noise for tool changing", "states": "trouble"}
     m = DialogueManager(imput=input)
 
