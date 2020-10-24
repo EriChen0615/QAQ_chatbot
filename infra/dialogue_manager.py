@@ -1,7 +1,7 @@
 from infra.component import Component
 import pandas as pd
 import numpy as np
-
+import infra.dumb_nlu as nlu
 """
 Intellegent: if one field is empty but only one candidate, can autofill
 gives suggestions based on historical features
@@ -37,12 +37,12 @@ class DialogueManager(Component):
         # self.tracker.connect(agent)
 
         self.input = None
-        self.setup1()
+        #self.setup1()
         self.last_state = None
         self.state=None
         # self.learnparameter=1
         self.state_counter = 0
-        self.filename = 'doc/cnc_troubleshooting.xlsx'
+        self.filename = '../data/cnc_troubleshooting.xlsx'
         self.df = self.excel_to_df()
         self.df_stats = []
 
@@ -63,7 +63,8 @@ class DialogueManager(Component):
         if self.input["error"] != None:
             self.error = self.input["error"]
         self.last_state=self.state
-        self.state = self.input["states"]
+        #print(self.input)
+        self.state = self.input["state"]
         try:
             self.part
         except AttributeError:
@@ -236,14 +237,21 @@ class DialogueManager(Component):
 
         df.to_excel(self.filename)
 
+def mergeprocess(nlu, m, text):
+    input=nlu.process(text)
+    #print(input)
+    m.input_debug(input)
+    m.run()
+
 if __name__ == '__main__':
     """
     input is a dictionary with three attributes: parts, error, states
     states[None=detect parts/error, yes/no=feedback from the user for the validity of the solution]
     """
-    input = {"parts": None, "error": "Noise for tool changing", "states": None}
-    m = DialogueManager(imput=input)
-
+    """test for local file
+    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": None}
+    m = DialogueManager()
+    m.input_debug(input)
     m.run()
     input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": None}
     m.input_debug(input)
@@ -251,8 +259,16 @@ if __name__ == '__main__':
     input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": "yes"}
     m.input_debug(input)
     m.run()
-
-
+    """
+    """testing for MERGING"""
+    natural_language=nlu.Dumb_NLU()
+    m=DialogueManager()
+    user_input='The change 4 noise milling is not working.,,,'
+    mergeprocess(natural_language, m, user_input)
+    user_input = 'The change 4 noise milling is not working.,,,'
+    mergeprocess(natural_language, m, user_input)
+    user_input = 'Yes'
+    mergeprocess(natural_language, m, user_input)
 
 """
 flow chart
