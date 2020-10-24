@@ -6,7 +6,7 @@ class Chatbot:
         self.components = components
         for i in range(len(components)-1):
             components[i].connect(components[i+1])
-        components[-1].connect(components[0])
+            components[-1].connect(components[0])
 
     def step(self, timesteps=1):
         for _ in range(timesteps):
