@@ -1,10 +1,20 @@
-from .component import Component
+from infra.component import Component
 import pandas as pd
 import numpy as np
 
+"""
+Intellegent: if one field is empty but only one candidate, can autofill
+gives suggestions based on historical features
+feature to be added: 1. suggestions refer to online forum
+                     2. add top search list
+                     3. maintaince
+feature to be tested:1. add customized measurements
+
+"""
+
 class DialogueManager(Component):
 
-    def __init__(self,):# imput):
+    def __init__(self, imput):
         super().__init__()
         # self.tracker = tracker
         # self.agent = agent
@@ -16,25 +26,33 @@ class DialogueManager(Component):
 
         ["state=greeting, abort, thanks, problem, yes, no"]
         """
-        #self.input = imput
+        self.input = imput
         self.setup1()
         self.last_state = None
         # self.learnparameter=1
         self.state_counter = 0
-        self.filename = '..doc/cnc_troubleshooting.xlsx'
+        self.filename = 'doc/cnc_troubleshooting.xlsx'
         self.df = self.excel_to_df()
-        self.df_stats = self.get_solutions(self.part, self.trouble)
+        self.df_stats = []
 
     def setup(self):
         pass
 
     def setup1(self):
         # print("Dialogue Manager is setup!")
-        self.part = self.input["parts"]
-        # self.part_tracker=[]
-        self.trouble = self.input["trouble"]
+        if self.input["parts"]!=None:
+            self.part = self.input["parts"]
+        if self.input["trouble"] != None:
+            self.trouble = self.input["trouble"]
         self.state = self.input["states"]
-        pass
+        try:
+            self.part
+        except AttributeError:
+            self.part=None
+        try:
+            self.trouble
+        except AttributeError:
+            self.trouble=None
 
     def input_debug(self, intm):
         self.input = intm
@@ -47,13 +65,11 @@ class DialogueManager(Component):
         if self.state == "greeting":
             response_msg = self.greeting()
         elif self.state == "thanks":
-            #print(1111)
             response_msg = self.thanks()
-
         elif self.state == "trouble" or "yes" or "no":
             response_msg = self.trouble_shooting()
         self.output = response_msg
-        #print(response_msg, self.state_counter, self.state)
+        print(response_msg)#, self.state_counter, self.state)
         self.last_state = self.state
 
     def to_front(self, action):
@@ -82,8 +98,10 @@ class DialogueManager(Component):
         feature to be added: 1. suggestions refer to online forum
         feature to be tested:1. add customized measurements
         """
-
-        if self.part is None or self.trouble is None:
+        """
+        Additional work: single variable take multiple choice
+        """
+        if self.part is None and self.trouble is None:
             return "I'm sorry, I couldn't understand. Good luck :-D"
         elif self.part is None:
             candidates=self.df.loc[(self.df['Error'] == self.trouble)]
@@ -96,15 +114,18 @@ class DialogueManager(Component):
                 return "Which part has problem? Is it"+','.join(candidates)+"?"
         elif self.trouble is None:
             candidates = self.df.loc[(self.df['Parts'] == self.part)]
-            candidates = candidates.Errors.tolist()
+            candidates = candidates.Error.tolist()
+            candidates = list(set(candidates))
             if len(candidates) == 1:
                 self.trouble = candidates[0]
                 self.do_step()
                 return 0
             else:
-                return "What's the problem with"+self.part+"?Is it"+','.join(candidates)+"?"
+                return "What's the problem with"+self.part+"? Is "+', '.join(candidates)+"?"
         else:
+            self.df_stats = self.get_solutions(self.part,self.trouble)
             self.state_counter = self.state_counter + 1
+            #print(self.trouble, self.part, self.state_counter, self.df_stats)
             return self.df_stats[self.state_counter - 1]
 
     def excel_to_df(self):
@@ -140,7 +161,7 @@ class DialogueManager(Component):
         df.to_excel(self.filename)
 
 if __name__ == '__main__':
-    input = {"parts": "Tool magazine(Umbrella type)", "trouble": "Noise for tool changing", "states": "trouble"}
+    input = {"parts": None, "trouble": "Noise for tool changing", "states": "trouble"}
     m = DialogueManager(imput=input)
 
     m.run()
