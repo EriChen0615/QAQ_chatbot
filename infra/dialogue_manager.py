@@ -109,10 +109,10 @@ class DialogueManager(Component):
             response_msg = self.solution_provider()
         self.output = response_msg
         print(response_msg)#, self.state_counter, self.state)
-        self.msg=response_message
+        self.msg=response_msg
         self.last_state = self.state
         if self.state=="yes":
-            self.__init__()
+            pass#self.__init__()
         return response_msg
 
     def to_front(self, action):
@@ -144,7 +144,7 @@ class DialogueManager(Component):
 
         self.df.to_excel(self.filename)
         #self.__init__()
-        return "My pleasure"
+        return "My pleasure."
 
     def trouble_shooting(self):
         """
@@ -196,7 +196,7 @@ class DialogueManager(Component):
             self.state_counter = self.state_counter + 1
             #print(self.error, self.part, self.state_counter, self.df_stats)
             if self.state_counter>len(self.df_stats):
-                self.__init__()
+                #self.__init__()
                 return "Sorry, it is beyond my scope."###provide user-defined manual
             return "Try to"+self.df_stats[self.state_counter - 1]+"Does it work?"
         elif self.state=="yes":
@@ -244,7 +244,10 @@ def mergeprocess(nlu, m, text):
     #print(input)
     m.input_debug(input)
     m.run()
-    return m.msg
+    console_msg=m.msg
+    if console_msg=="Sorry, it is beyond my scope." or console_msg=="My pleasure.":
+        m.__init__()
+    return console_msg
 
 if __name__ == '__main__':
     """
@@ -271,8 +274,8 @@ if __name__ == '__main__':
     user_input = 'The change 4 noise milling is not working.,,,'
     mergeprocess(natural_language, m, user_input)
     user_input = 'Yes'
-    mergeprocess(natural_language, m, user_input)
-
+    k=mergeprocess(natural_language, m, user_input)
+    #print(k)
 """
 flow chart
 0. initialize
