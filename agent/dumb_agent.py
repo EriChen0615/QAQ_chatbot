@@ -1,6 +1,8 @@
 import sys
+
 sys.path.append('..')
 from infra.agent import Agent
+
 
 class DumbAgent(Agent):
 
@@ -8,5 +10,4 @@ class DumbAgent(Agent):
         print(f"{self.name} is setup")
 
     def step(self, state):
-        return {'bot_intent':'respond', 'response': f"intent: {state['cur_intent']} at round {state['number']}"}
-
+        return {'bot_intent': 'respond', 'response': f"intent: {state['cur_intent']} at round {state['number']}"}
