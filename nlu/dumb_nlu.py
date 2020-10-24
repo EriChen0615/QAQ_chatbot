@@ -4,6 +4,7 @@ from infra.nlu import NLU
 import re
 import spacy
 import numpy as np
+import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 
 class Dumb_NLU(NLU):
@@ -12,8 +13,8 @@ class Dumb_NLU(NLU):
         print(f"{self.name} is setup")
 
     def process(self):
-        num = re.search(r'\d+', self.text).group(0)
-        intent = re.search(r'hello', self.text).group(0)
+        # num = re.search(r'\d+', self.text).group(0)
+        # intent = re.search(r'hello', self.text).group(0)
 
         text = self.text
         text = text.replace('.',' ')
@@ -27,12 +28,26 @@ class Dumb_NLU(NLU):
         stemmed_text_list = stemmed_text.split(' ')
 
         # load word_error_mat file to a matrix
-        probability_matrix = np.loadtxt(open("test.csv", "rb"), delimiter=",", skiprows=1, skipcols=1)
-        print(probability_matrix)
+        csvfilepath = "../data/word_error_mat.csv"
+        probability_matrix = np.loadtxt(open(csvfilepath, "rb"), delimiter=",", skiprows=1, usecols=range(1,28))
+        # print(probability_matrix)
 
-        # num_stemmed_text_list = []
-        # for word in stemmed_text_list:
+        keyword_list = pd.read_csv(csvfilepath, sep=",",usecols=[0]).values.tolist()
+        print(keyword_list)
+
+        num_stemmed_text_list = []
+        for word, keyword in stemmed_text_list, keyword_list:
+            if word == keyword:
+                num_stemmed_text_list.append(1)
+            else:
+                num_stemmed_text_list.append(0)
+
+        print(num_stemmed_text_list)
 
 
+        # return {'number':num, 'intent':intent}
 
-        return {'number':num, 'intent':intent}
+
+test = Dumb_NLU()
+test.text = 'The change 4 noise milling is not working.,,,'
+test.process()
