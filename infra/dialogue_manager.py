@@ -1,7 +1,6 @@
-from .component import Component
-from .tracker import Tracker
-from .agent import Agent
+import pandas as pd
 
+"""
 class DialogueManager(Component):
 
     def __init__(self, tracker, agent):
@@ -9,17 +8,32 @@ class DialogueManager(Component):
         self.tracker = tracker
         self.agent = agent
         self.tracker.connect(agent)
-
-    def setup(self):
-        print("Dialogue Manager is setup!")
-
-    def do_step(self):
-        self.tracker.input = self.input
-        self.tracker.run()
-        self.agent.run()
-        self.output = self.to_front(self.agent.output)
-
-    def to_front(self, action):
-        return {'response':action['response'], 'browser_action':'reply'}
+"""
 
 
+def excel_to_df(file_path):
+    return pd.read_excel(file_path, 0)
+
+
+def read_sorted_solution(df, part, error):
+    df = df.loc[(df['Parts'] == part) & (df['Error'] == error)]
+    df = df.sort_values('appear_time')
+    print(df)
+    solutions = df.Solution.tolist()
+    return solutions[::-1]
+
+
+def get_solutions(part, error, filename):
+    """
+    Look for possible solutions from database
+    :return:
+        A list of solutions based on given part and error from most frequent to least frequent.
+    """
+
+    df = excel_to_df(filename)
+    return read_sorted_solution(df, part, error)
+
+
+filename = '../doc/cnc_troubleshooting.xlsx'
+part = 'Tool magazine(Umbrella type)'
+error = 'Noise for tool changing'
