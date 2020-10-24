@@ -1,10 +1,10 @@
 No,Part,Trouble,Key_word,Umbrella,noise
-1,Tool magazine (Umbrella type),Noise for tool changing,"Umbrella, noise, change",1/5,1/4
+1,,Noise for tool changing umbrella,"Umbrella, noise, change",1/5,1/4
 ,,Can't change the tool,"Umbrella, change, tool",1/5,0
 ,,Tool number in chaos,"Umbrella, tool, number, chaos",1/5,0
 ,,Tool magazine keep rotation,"Umbrella, rotation",1/5,0
 ,,Tool magazine not drawing back,"Umbrella, tool, magazine, draw, back",1/5,0
-2,Tool magazine (Arm type),Noise for tool changing,"Arm, noise, tool, change",0,1/4
+2,Tool magazine (Arm type),Noise for tool changing arm,"Arm, noise, tool, change",0,1/4
 ,,can't change to tool,"Arm, change, tool",0,0
 ,,tool magazine not drawing back,"Arm, tool, magazine, draw, back",0,0
 3,Axis Trouble ,over limited,"Axis, limit",0,0
