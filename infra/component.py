@@ -1,6 +1,16 @@
 from abc import ABC, abstractmethod
 
 class Component(ABC):
+    """
+    The building block of a chatbot. It can connect to other components. It does the following:
+    1. Call setup() upon object creation
+    2. Call do_step() upon each call to run()
+    3. Pass the output of the function to the input of the connected componenet
+
+    Any subclass should implement:
+    - setup() : object initialization
+    - do_step() : called upon each timestep, should use self.input to produce self.output
+    """
     def __init__(self):
         self.name = self.__class__.__name__
         self.input = {}

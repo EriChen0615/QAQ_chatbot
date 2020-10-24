@@ -2,6 +2,15 @@ from abc import ABC, abstractmethod
 from .component import Component
 
 class Agent(Component):
+    """
+    Base class for agents. It receives a state from the previous component and product an action.
+
+    Input:
+        - state :dict
+
+    Output:
+        - action
+    """
 
     @abstractmethod
     def setup(self):
