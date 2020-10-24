@@ -100,7 +100,7 @@ class Dumb_NLU(NLU):
         # print(result_error_list)
         # print(result_part_list)
         intention = self.get_intent(text)
-        return {'error': result_error_list, 'part': result_part_list, 'intent': intention}
+        return {'error': result_error_list, 'parts': result_part_list, 'state': intention}
         # return {'number':num, 'intent':intent}
 
 
