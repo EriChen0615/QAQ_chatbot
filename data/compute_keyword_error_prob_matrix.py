@@ -3,6 +3,11 @@
 
 
 import pandas as pd
+import spacy
+import nltk
+from nltk.stem.snowball import SnowballStemmer
+
+from nltk.stem.porter import *
 
 df = pd.read_csv('error_kws.csv')
 
@@ -22,9 +27,15 @@ key_words
 
 p_mat = pd.DataFrame({e: [0]*len(key_words) for e in df['Trouble']}, dtype=float)
 
-p_mat.index = [w for w in key_words]
+nlp = spacy.load('en_core_web_sm')
+lemmatizer = nlp.vocab.morphology.lemmatizer
 
-p_mat['Noise for tool changing']['noise']
+stemmer = SnowballStemmer(language='english')
+# stemmer = PorterStemmer()
+
+p_mat.index = [stemmer.stem(w.lower()) for w in key_words]
+
+p_mat['Noise for tool changing']['nois']
 
 len(key_words['noise'])
 
