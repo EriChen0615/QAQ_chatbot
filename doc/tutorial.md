@@ -1,6 +1,10 @@
 # Tutorial: Solving your problem with QAQ' Chatbot
 
-We present QAQ' chatbot, a flexible chatbot system designed to make it easy to develop diagnosis chatbot system for industrial equipement. You may supply your data to our off-the-shelf components and get it running in minutes. You may also expand on our modular framework and build your component easily. Build your chatbot right now!
+We present QAQ' chatbot, a flexible chatbot system designed to make it easy to develop diagnosis chatbot system for industrial equipement. You may supply your data to our off-the-shelf components and get it running in minutes. You may also expand on our modular framework and build your component easily. Build your chatbot right now! To summarize, you have:
+
+1. Off-the-shelf web interface
+2. Automatic end-to-end chatbot training
+3. Extensible framework
 
 ## Not sure? Try it!
 
@@ -49,3 +53,16 @@ Mathematically, we model user sentence as a sequence of word $[w_1, w_2, ...]$. 
 For this to work, we assume that the user is going to refrain its language within the domain $W_e$, the size of $|W_e|$ is reasonable for a specific domain and that key words are good indication of the error, which has been shown to be true for the CNC robot. It should hold true for most manual because error description tends to be concise. The key word-error correlation matrix demonstrates that.
 
 ![](cor_mat.png)
+
+## How to go beyond QAQ'?
+
+You can easily extend QAQ's functionality. If you want to build your own NLU using neural network (if you have conversation data), you will need to write a class which **inherits** the super class NLU and declares it in `main.py`.
+	
+	from your_nlu import YourNLU
+	...
+	nlu = YourNLU() # replace nlu = NB_NLU()
+
+Then you are done! You can expect the nlu to receive text as input and connect properly with the default dialogue manager.
+
+
+	
