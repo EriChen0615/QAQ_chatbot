@@ -125,6 +125,6 @@ class Dumb_NLU(NLU):
 
 if __name__ == '__main__':
     test = Dumb_NLU()
-    text = 'hi milling'
+    text = "arm tool change"
     dict = test.process(text)
     print(dict)

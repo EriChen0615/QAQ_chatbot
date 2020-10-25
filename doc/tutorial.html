@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tutorial</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="D:\Notebooks\github-pandoc.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="tutorial-solving-your-problem-with-qaq-chatbot">Tutorial: Solving your problem with QAQ’ Chatbot</h1>
+<p>We present QAQ’ chatbot, a flexible chatbot system designed to make it easy to develop diagnosis chatbot system for industrial equipement. You may supply your data to our off-the-shelf components and get it running in minutes. You may also expand on our modular framework and build your component easily. Build your chatbot right now! To summarize, you have:</p>
+<ol type="1">
+<li>Off-the-shelf web interface</li>
+<li>Automatic end-to-end chatbot training</li>
+<li>Extensible framework</li>
+</ol>
+<h2 id="not-sure-try-it">Not sure? Try it!</h2>
+<p>We provide a working example of diagnosis chatbot based on the CNC milling machine. You can check the manual <a href="cnc_machine_troubleshooting_1.pdf">here</a>. Ask away and see how QAQ’ responds!</p>
+<h2 id="overall-architecture">Overall Architecture</h2>
+<p>We handle the problem in three stages: 1. User interface: how the chatbot interacts with user 2. Natural Language Understanding(NLU): interpret user input to meaningful information for problem-solving 3. Dialogue Manager: Fetch the answer from database and generate human-friendly response</p>
+<p>Here’s a demo showing how it’s done. <img src="demo1.jpg" /></p>
+<p>The interfaces between these components are already defined for you, so you only need to tackle the problems separately, saving your time to re-analyze/distribute the task. The below diagram shows the exchange of information between these components:</p>
+<p><img src="Sequence%20Diagram.png" /></p>
+<p><strong>User Interface</strong> takes the user input text and pass it onto the NLU.</p>
+<p><strong>NLU</strong> takes the text and parse it into <em>intent</em> and <em>entities</em>, <em>intent</em> is what the user tries to do. <em>entities</em> are useful information for solving the problem (e.g., what machine part is the user referring to, what’s the fault about it?)</p>
+<p><strong>Dialogue Manager</strong> takes the <em>intent</em> and <em>entities</em> from the NLU and determines whether it can a) return an answer or b) request more information, basing on the information given. It then issues a response to be displayed to the user interface.</p>
+<h2 id="customize-with-your-data">Customize with your data</h2>
+<p>For different problem, the NLU needs to be adapted to be sensitive to the jargons of your specific machine. Same for the dialogue manager becuase your solution is specific to your machine. Things can get quite technical but QAQ’ provides you with an easy way to handle it.</p>
+<p>You will need to convert your manual to a csv file like (this)[]. Each row will need to include the <strong>part</strong> at fault, <strong>error description</strong> and <strong>solution</strong>. This will form the knowledge base for the chatbot!</p>
+<p>Then you are done! You will need to run <code>train.py</code> and the program will automatically train the chatbot to fit your problem. You <strong>will not</strong> need a machine learning library like Pytorch or Tensorflow. It is all done in generic numpy!</p>
+<h2 id="testing-your-chatbot-and-make-it-better">Testing your chatbot, and make it better</h2>
+<p>Run <code>main.py</code> and you will start a web interface for your chatbot. Talk to it and see what it can do.</p>
+<p>You can make it smarter by using it more. QAQ’ will keep track of your enquiry history and determines the most likely solution to your error. So it gets better everytime you talks to it!</p>
+<h2 id="so-how-does-it-work">So how does it work?</h2>
+<p>QAQ’ is a system for very specfic problem. We assume that you are not interested in throwing in a detailed, thousand-page trouble shooting manual. It will probably work but not as well. The hard-lifting happens at the NLU. From your manual it will extracts useful words and associate them with corresponding errors. Then a given user sentence, it looks for these key words and tries to determine which error the user is referring to.</p>
+<p>Mathematically, we model user sentence as a sequence of word <span class="math inline">\([w_1, w_2, ...]\)</span>. We also define a key word set <span class="math inline">\(W_e\)</span> and the probability matrix <span class="math inline">\(P\)</span> where the <span class="math inline">\(i\)</span>th row <span class="math inline">\(j\)</span>th column refers to the probability of the <span class="math inline">\(j\)</span>th error given the <span class="math inline">\(i\)</span>th word <span class="math inline">\(P_{i,j} = Pr(e_j|w_i)\)</span>. We then sum those probability up to obtain our estimate for the error. If vector <span class="math inline">\(w\)</span> is the indication vector of key words extracted from the user input, then the error estimate <span class="math inline">\(r = w^TP\)</span>, a matrix multiplication.</p>
+<p>For this to work, we assume that the user is going to refrain its language within the domain <span class="math inline">\(W_e\)</span>, the size of <span class="math inline">\(|W_e|\)</span> is reasonable for a specific domain and that key words are good indication of the error, which has been shown to be true for the CNC robot. It should hold true for most manual because error description tends to be concise. The key word-error correlation matrix demonstrates that.</p>
+<p><img src="cor_mat.png" /></p>
+<h2 id="how-to-go-beyond-qaq">How to go beyond QAQ’?</h2>
+<p>You can easily extend QAQ’s functionality. If you want to build your own NLU using neural network (if you have conversation data), you will need to write a class which <strong>inherits</strong> the super class NLU and declares it in <code>main.py</code>.</p>
+<pre><code>from your_nlu import YourNLU
+...
+nlu = YourNLU() # replace nlu = NB_NLU()</code></pre>
+<p>Then you are done! You can expect the nlu to receive text as input and connect properly with the default dialogue manager.</p>
+</body>
+</html>
