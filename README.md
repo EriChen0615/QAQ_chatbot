@@ -13,4 +13,4 @@ We provide a working example of diagnosis chatbot based on the CNC milling machi
 
 ## More Information
 
-If you are looking to understand the framework, extend its functionality or **solve your problem with QAQ'**, please consult the [tutorial](doc/tutorial.html) in doc folder.
+If you are looking to understand the framework, extend its functionality or **solve your problem with QAQ'**, please consult the [tutorial](doc/tutorial.md) in doc folder.

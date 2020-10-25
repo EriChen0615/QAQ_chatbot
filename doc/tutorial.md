@@ -22,7 +22,7 @@ Here's a demo showing how it's done.
 
 The interfaces between these components are already defined for you, so you only need to tackle the problems separately, saving your time to re-analyze/distribute the task. The below diagram shows the exchange of information between these components:
 
-![](Sequence Diagram.png)
+![](Sequence_Diagram.png)
 
 **User Interface** takes the user input text and pass it onto the NLU.
 
@@ -34,7 +34,7 @@ The interfaces between these components are already defined for you, so you only
 
 For different problem, the NLU needs to be adapted to be sensitive to the jargons of your specific machine. Same for the dialogue manager becuase your solution is specific to your machine. Things can get quite technical but QAQ' provides you with an easy way to handle it.
 
-You will need to convert your manual to a csv file like (this)[]. Each row will need to include the **part** at fault, **error description** and **solution**. This will form the knowledge base for the chatbot!
+You will need to convert your manual to a csv file and a xlsx copy like [this](../data/cnc_troubleshooting.xlsx). Each row will need to include the **part** at fault, **error description** and **solution**. This will form the knowledge base for the chatbot!
 
 Then you are done! You will need to run `train.py` and the program will automatically train the chatbot to fit your problem. You **will not** need a machine learning library like Pytorch or Tensorflow. It is all done in generic numpy!
 
