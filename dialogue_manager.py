@@ -63,9 +63,9 @@ class DialogueManager(Component):
         :return: None
         """
         # print("Dialogue Manager is setup!")
-        if self.input['parts']:
+        if "parts" in self.input and self.input['parts']:
             self.part = self.input["parts"]
-        if self.input['error']:
+        if "error" in self.input and self.input['error']:
             self.error = self.input["error"]
         self.last_state = self.state
         if "solution" in self.input:
@@ -167,7 +167,7 @@ class DialogueManager(Component):
         """
         if not self.state:
             return "I'm sorry, TROUBLE!!"
-        elif self.state == 'greating':
+        elif self.state == 'greeting':
             return "Please tell me more about your issue!"
         elif not self.part and not self.error:
             return "I'm sorry, I couldn't understand. Good luck :-D"
@@ -204,7 +204,7 @@ class DialogueManager(Component):
         :return: solution!
         """
         if self.state == "no":
-            if not self.part and not self.error:
+            if self.part and self.error:
                 self.df_stats = self.get_solutions(self.part, self.error)
             self.state_counter = self.state_counter + 1
             # print(self.error, self.part, self.state_counter, self.df_stats)
@@ -214,8 +214,8 @@ class DialogueManager(Component):
                        "so that I can help next time! $Enter your solution with the dollar signs$"  # provide
                 # user-defined manual
             return "Try to " + self.df_stats[self.state_counter - 1].lower() + ". Does it work?"
-        elif self.state == "study":
-            self.study(self.part, self.error, self.new_solution)
+        elif self.state == "solution":
+            self.study()
             return "Thank you for your information!"
         elif self.state == "yes":
             print(self.df_stats)
@@ -247,17 +247,13 @@ class DialogueManager(Component):
         """
         return self.read_sorted_solution(self.df, part, error)
 
-    def study(self, part, error, new_solution):
+    def study(self):
         """
         Add a new solution from user feedback if all the possible solutions are declined.
         """
         df = pd.read_excel(self.filename, 0)
-        i = 0
-        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[
-            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
-            i += 1
-
-        pd.DataFrame(np.insert(df.values, i + 1, values=[part, error, new_solution, 0], axis=0))
+        df2 = pd.DataFrame([self.part,self.error,self.new_solution,0])
+        df = df.append(df2, ignore_index=True)
 
         df.to_excel(self.filename, index=False)
 
