@@ -18,7 +18,7 @@ Here's a demo showing how it's done.
 
 The interfaces between these components are already defined for you, so you only need to tackle the problems separately, saving your time to re-analyze/distribute the task. The below diagram shows the exchange of information between these components:
 
-![](Sequence Diagram v0.1.png)
+![](Sequence Diagram.png)
 
 **User Interface** takes the user input text and pass it onto the NLU.
 
