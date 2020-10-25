@@ -6,36 +6,31 @@ import itertools
 import re
 
 
+
 class NB_NLU(NLU):
+
+    error_probability_threshold = 0.75
 
     def makeErrorPartList(self):
         csvfilepath = 'data/error_keywords_1.csv'
         error_part_list = pd.read_csv(csvfilepath, sep=",", usecols=[2]).values.tolist()
         self.error_part_list = [item for sublist in error_part_list for item in sublist]
         self.parts = set(self.error_part_list)
-        # print(self.error_part_list)
-        # print(len(self.error_part_list))
 
     def makeErrorList(self):
         csvfilepath = 'data/error_keywords_1.csv'
         error_list = pd.read_csv(csvfilepath, sep=",", header=None, usecols=[3]).values.tolist()
         error_list = [item for sublist in error_list for item in sublist]
         self.error_list = error_list[1:len(error_list)]
-        # print(self.error_list)
-        # print(len(self.error_list))
 
     def makeProbabilityMatrix(self):
         csvfilepath = "data/word_error_mat.csv"
         self.probability_matrix = np.loadtxt(open(csvfilepath, "rb"), delimiter=",", skiprows=1, usecols=range(1, 28))
-        # print(self.probability_matrix)
-        # print(self.probability_matrix.shape)
 
     def makeKeywordList(self):
         csvfilepath = 'data/word_error_mat.csv'
         keyword_list = pd.read_csv(csvfilepath, sep=",", usecols=[0]).values.tolist()
         self.keyword_list = [item for sublist in keyword_list for item in sublist]
-        # print(self.keyword_list)
-        # print(len(self.keyword_list))
 
     def setup(self):
         # print(f"{self.name} is setup")
@@ -48,6 +43,17 @@ class NB_NLU(NLU):
         self.makeErrorList()
         self.makeProbabilityMatrix()
         self.makeKeywordList()
+
+    def textPreprocess(self,text):
+
+        text_without_punctuation = re.sub(r'[^\w\s]', '', text)
+        stemmer = SnowballStemmer(language='english')
+        split_text = text_without_punctuation.split(' ')
+        stemmed_text_list = []
+        for word in split_text:
+            stemmed_text_list.append(stemmer.stem(word.lower()))
+
+        return stemmed_text_list
 
     def get_intent(self, text):
         """
@@ -89,14 +95,12 @@ class NB_NLU(NLU):
 
     def process(self, text):
 
-        text = text.replace(".", "")
-        text = text.replace(",", "")
+        if text.startswith('$') and text.startswith('$'):
+            text = text.replace('$',' ')
+            intention = 'solution'
+            return {'solution': text, 'state': intention}
 
-        stemmer = SnowballStemmer(language='english')
-        split_text = text.split(' ')
-        stemmed_text_list = []
-        for word in split_text:
-            stemmed_text_list.append(stemmer.stem(word.lower()))
+        stemmed_text_list = self.textPreprocess(text)
 
         num_stemmed_text_list = []
         for keyword in self.keyword_list:
@@ -110,16 +114,19 @@ class NB_NLU(NLU):
         result_list = num_stemmed_text_list.dot(self.probability_matrix)
         print(result_list)
 
-        error_id = np.argmax(result_list)
+        error_id = None
+        if np.argmax(result_list) >= self.error_probability_threshold:
+             error_id = np.argmax(result_list)
 
-
-        # print(result_error_list)
-        # print(result_part_list)
         intention = self.get_intent(text)
         if intention is None:
             intention = "trouble"
-        return {'error': self.error_list[error_id], 'parts': self.get_parts(text), 'state': intention}
-        # return {'number':num, 'intent':intent}
+
+        if error_id!=None:
+            return {'error': self.error_list[error_id], 'parts': self.get_parts(text), 'state': intention}
+
+        return {'error': None, 'parts': None, 'state': intention}
+
 
 
 if __name__ == '__main__':
@@ -153,4 +160,5 @@ if __name__ == '__main__':
         print("="*20)
         total_count += 1
     print("Success rate", correct_count/total_count)
+
 

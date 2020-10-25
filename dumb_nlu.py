@@ -11,29 +11,21 @@ class Dumb_NLU(NLU):
         csvfilepath = 'data/error_keywords_1.csv'
         error_part_list = pd.read_csv(csvfilepath, sep=",", usecols=[2]).values.tolist()
         self.error_part_list = [item for sublist in error_part_list for item in sublist]
-        # print(self.error_part_list)
-        # print(len(self.error_part_list))
 
     def makeErrorList(self):
         csvfilepath = 'data/error_keywords_1.csv'
         error_list = pd.read_csv(csvfilepath, sep=",", header=None, usecols=[3]).values.tolist()
         error_list = [item for sublist in error_list for item in sublist]
         self.error_list = error_list[1:len(error_list)]
-        # print(self.error_list)
-        # print(len(self.error_list))
 
     def makeProbabilityMatrix(self):
         csvfilepath = "data/word_error_mat.csv"
         self.probability_matrix = np.loadtxt(open(csvfilepath, "rb"), delimiter=",", skiprows=1, usecols=range(1, 28))
-        # print(self.probability_matrix)
-        # print(self.probability_matrix.shape)
 
     def makeKeywordList(self):
         csvfilepath = 'data/word_error_mat.csv'
         keyword_list = pd.read_csv(csvfilepath, sep=",", usecols=[0]).values.tolist()
         self.keyword_list = [item for sublist in keyword_list for item in sublist]
-        # print(self.keyword_list)
-        # print(len(self.keyword_list))
 
     def setup(self):
         # print(f"{self.name} is setup")
