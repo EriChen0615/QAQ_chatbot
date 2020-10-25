@@ -5,7 +5,7 @@ We present QAQ' chatbot, a flexible chatbot system designed to make it easy to d
 1. Off-the-shelf web interface
 2. Automatic end-to-end chatbot training
 3. Extensible framework
-4. Off-the-shelf adaptive 
+4. Off-the-shelf adaptive ranking of candidate solutions (as you use the bot!)
 
 ## Not sure? Try it!
 
