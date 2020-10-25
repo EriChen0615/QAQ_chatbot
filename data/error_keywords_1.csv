@@ -1,0 +1,29 @@
+,No,Part,Trouble,Key_word,
+0,1,Tool magazine (Umbrella type),Noise for tool changing,"Umbrella, noise, change","Noise for tool changing', 'Can't change the tool',"
+1,,Tool magazine (Umbrella type),Can't change the tool,"Umbrella, change, tool","Tool number in chaos', 'Tool magazine keep rotation',"
+2,,Tool magazine (Umbrella type),Tool number in chaos,"Umbrella, tool, number, chaos","Tool magazine not drawing back', 'can't change to tool',"
+3,,Tool magazine (Umbrella type),Tool magazine keep rotation,"Umbrella, rotation","tool magazine not drawing back', 'over limited', 'can't back to zero ',"
+4,,Tool magazine (Umbrella type),Tool magazine not drawing back,"Umbrella, tool, magazine, draw, back","noise for axis ', 'spindle noise', 'can't drain',"
+5,2,Tool magazine (Arm type),Noise for tool changing,"Arm, noise, tool, change","lubrication pump trouble ',"
+6,,Tool magazine (Arm type),can't change to tool,"Arm, change, tool","tool magazine is not positioned and could not get the sensor signal ',"
+7,,Tool magazine (Arm type),tool magazine not drawing back,"Arm, tool, magazine, draw, back","cannot find the tool number ', 'tool collets cannot go down',"
+8,3,Axis Trouble ,over limited,"Axis, limit","arm 90 degree error', 'tool unclamp ', 'arm 270 degree error',"
+9,,Axis Trouble ,can't back to zero ,"axis, zero","tool collets cannot go upward', 'arm jog mode error',"
+10,,Axis Trouble ,noise for axis ,"axis, noise","tool is not clamp well', 'arm home point error', 'atc limit error',"
+11,4,Spindle trouble ,spindle noise,"spindle, noise","tcode = spindle tool', 'door is not close ',"
+12,5,coolant pump trouble ,can't drain,"coolant, pump, drain","the 4th axis is not clamp '],"
+13,6,lubrication pump trouble ,lubrication pump trouble ,"lubrication, pump, trouble",
+14,7,tool not inposition,tool magazine is not positioned and could not get the sensor signal ,"tool, position, sensor, signal",
+15,8,tool number not found ,cannot find the tool number ,"tool, number, find",
+16,9,tool pot not down ,tool collets cannot go down,"tool, pot, collects, down",
+17,10,arm 90 error,arm 90 degree error,"arm, 90, error",
+18,11,tool not unclamp,tool unclamp ,"tool, unclamp",
+19,12,arm 270 error,arm 270 degree error,"arm, 270, error",
+20,13,tool pot not up,tool collets cannot go upward,"tool, pot, collects, up, upwards",
+21,14,arm jog mode,arm jog mode error,"arm, jog, mode",
+22,15,tool not clamp,tool is not clamp well,"tool, clamp",
+23,16,arm home pos error,arm home point error,"arm, home, pos, point",
+24,17,atc ls error,atc limit error,"atc, limit, error",
+25,18,t code = sp,tcode = spindle tool,"tcode, spindle, tool",
+26,19,door not close,door is not close ,"door, close",
+27,20,4 axis clamp,the 4th axis is not clamp ,"4, axis, clamp",

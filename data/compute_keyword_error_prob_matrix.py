@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
+# to be changed, matrix value incorrect
 
 
 import pandas as pd
-import spacy
 from nltk.stem.snowball import SnowballStemmer
 
 
@@ -23,17 +23,21 @@ for index, row in df.iterrows():
             key_words[w] = {row['Trouble']}
 key_words
 
-p_mat = pd.DataFrame({e: [0]*len(key_words) for e in df['Trouble']}, dtype=float)
 
-nlp = spacy.load('en_core_web_sm')
-lemmatizer = nlp.vocab.morphology.lemmatizer
+data = {}
+
+for e in df['Trouble']:
+    data[e] = [0]*len(key_words)
+# p_mat = pd.DataFrame({e: [0]*len(key_words) for e in df['Trouble']}, dtype=float)
+p_mat = pd.DataFrame(data, dtype=float)
+
 
 stemmer = SnowballStemmer(language='english')
-# stemmer = PorterStemmer()
+
 
 p_mat.index = [stemmer.stem(w.lower()) for w in key_words]
 
-p_mat['Noise for tool changing']['nois']
+p_mat['Noise for tool changing umbrella']['nois']
 
 len(key_words['noise'])
 
@@ -41,7 +45,7 @@ for w in key_words:
     for e in key_words[w]:
         p_mat[e][w] = 1/len(key_words[w])
 
-p_mat['Noise for tool changing']
+p_mat['Noise for tool changing umbrella']
 
 
 p_mat
@@ -49,5 +53,5 @@ p_mat
 import seaborn as sns
 
 hm = sns.heatmap(p_mat)
-
+print(p_mat.shape)
 p_mat.to_csv('word_error_mat.csv')
