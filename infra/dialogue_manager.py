@@ -1,3 +1,4 @@
+from infra.dumb_nlu import Dumb_NLU
 from infra.component import Component
 import pandas as pd
 import numpy as np
@@ -104,7 +105,7 @@ class DialogueManager(Component):
         Additionally, if it is "yes", case closed and object inits itself.
         :return: response_msg to the UI
         """
-        if self.part == None or self.error == None:
+        if not self.part or not self.error:
             response_msg = self.trouble_shooting()
         else:
             response_msg = self.solution_provider()
@@ -136,9 +137,8 @@ class DialogueManager(Component):
         :return: Answer politely with a speck of pride. Our chatbot is well-educated gentleman/lady
         """
         # print(self.part, self.error, self.state_counter)
-        i = 0
-        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[
-            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
+        i = 1
+        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[i, 'Solution'] != self.df_stats[self.state_counter - 1]:
             i += 1
         self.df.loc[i, 'appear_time'] += 1
         self.df.to_excel(self.filename, sheet_name='Sheet1', index=False, header=True)
@@ -160,18 +160,20 @@ class DialogueManager(Component):
         feature to be added: 1. suggestions refer to online forum
         feature to be tested:1. add customized measurements
         """
-        if self.part is None and self.error is None:
+        if not self.part and not self.error:
             return "I'm sorry, I couldn't understand. Good luck :-D"
-        elif self.part is None:
+        elif not self.part:
             candidates = self.df.loc[(self.df['Error'] == self.error)]
             candidates = candidates.Parts.tolist()
+            candidates = list(set(candidates))
             if len(candidates) == 1:
                 self.part = candidates[0]
                 self.do_step()
                 return 0
             else:
-                return "Which part has this problem? Is it" + ','.join(candidates) + "?"
-        elif self.error is None:
+                return "Which part has this problem? Is it " + ','.join(candidates) + "?"
+        elif not self.error:
+            self.df = self.excel_to_df()
             candidates = self.df.loc[(self.df['Parts'] == self.part)]
             candidates = candidates.Error.tolist()
             candidates = list(set(candidates))
@@ -180,7 +182,7 @@ class DialogueManager(Component):
                 self.do_step()
                 return 0
             else:
-                return "What's the problem with" + self.part + "? Is " + ', '.join(candidates) + "?"
+                return "What's the problem with " + self.part + "? Is " + ', '.join(candidates) + "?"
         else:
             return
 
@@ -198,9 +200,11 @@ class DialogueManager(Component):
             # print(self.error, self.part, self.state_counter, self.df_stats)
             if self.state_counter > len(self.df_stats):
                 # self.__init__()
-                return "Sorry, it is beyond my scope."  ###provide user-defined manual
-            return "Try to" + self.df_stats[self.state_counter - 1] + "Does it work?"
+                return "Sorry, it is beyond my scope."  # provide user-defined manual
+            return "Try to " + self.df_stats[self.state_counter - 1].lower() + ". Does it work?"
         elif self.state == "yes":
+            print(self.df_stats)
+            print(self.state_counter)
             return self.thanks()
 
     def excel_to_df(self):
@@ -243,7 +247,7 @@ class DialogueManager(Component):
 
 def mergeprocess(nlu, m, text):
     input = nlu.process(text)
-    # print(input)
+    print(input)
     m.input_debug(input)
     m.run()
     console_msg = m.msg
@@ -257,28 +261,33 @@ if __name__ == '__main__':
     input is a dictionary with three attributes: parts, error, states
     states[None=detect parts/error, yes/no=feedback from the user for the validity of the solution]
     """
-    """test for local file
-    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": None}
+    """test for local file"""
+    input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
     m = DialogueManager()
     m.input_debug(input)
     m.run()
-    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": None}
+    """input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing umbrella", "state": None}
     m.input_debug(input)
     m.run()
-    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "states": "yes"}
+    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "state": "yes"}
+    m = DialogueManager()
     m.input_debug(input)
-    m.run()
-    """
+    m.run()"""
+
     """testing for MERGING"""
-    natural_language = nlu.Dumb_NLU()
+    """
+    natural_language = Dumb_NLU()
     m = DialogueManager()
+    user_input = 'hi'
+    mergeprocess(natural_language, m, user_input)
+    
     user_input = 'The change 4 noise milling is not working.,,,'
     mergeprocess(natural_language, m, user_input)
-    user_input = 'The change 4 noise milling is not working.,,,'
+    user_input = 'no'
     mergeprocess(natural_language, m, user_input)
-    user_input = 'Yes'
-    k = mergeprocess(natural_language, m, user_input)
-    # print(k)
+    """
+
+
 """
 flow chart
 0. initialize
