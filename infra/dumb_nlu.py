@@ -51,14 +51,35 @@ class Dumb_NLU(NLU):
         self.makeKeywordList()
 
     def get_intent(self, text):
-        # define yes/no
+        """
+        The inital state of the dialogue needs to be set to 'no' to avoid clashing.
+        intentions:
+            - no
+            - yes
+            - greating
+            - bypass
+        :param text:
+        :return:
+        """
+        # If intention yes
         yes_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'yes')))
         yeah_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'yeah')))
         yep_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'yep')))
-        l = list(yes_list) + list(yeah_list) + list(yep_list)
-        for i in l:
+        cheers_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'cheers')))
+        yes_l = list(yes_list) + list(yeah_list) + list(yep_list) + list(cheers_list)
+        for i in yes_l:
             if i in text:
                 return 'yes'
+
+        # If greating
+        hi_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hi')))
+        hello_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hello')))
+        hey_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hello')))
+        greating_l = list(hi_list) + list(hello_list) + list(hey_list)
+        for i in greating_l:
+            if i in text:
+                return 'greating'
+
         return 'no'
 
     def process(self, text):

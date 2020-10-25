@@ -105,7 +105,7 @@ class DialogueManager(Component):
         Additionally, if it is "yes", case closed and object inits itself.
         :return: response_msg to the UI
         """
-        if not self.part or not self.error:
+        if not self.part or not self.error or not self.state:
             response_msg = self.trouble_shooting()
         else:
             response_msg = self.solution_provider()
@@ -160,7 +160,11 @@ class DialogueManager(Component):
         feature to be added: 1. suggestions refer to online forum
         feature to be tested:1. add customized measurements
         """
-        if not self.part and not self.error:
+        if not self.state:
+            return "I'm sorry, TROUBLE!!"
+        elif self.state == 'greating':
+            return "Please tell me more about your issue!"
+        elif not self.part and not self.error:
             return "I'm sorry, I couldn't understand. Good luck :-D"
         elif not self.part:
             candidates = self.df.loc[(self.df['Error'] == self.error)]
@@ -194,7 +198,7 @@ class DialogueManager(Component):
         If my master solved the problem, hooray! Jump to the wrap up thanks()
         :return: solution!
         """
-        if self.state != "yes":
+        if self.state == "no":
             self.df_stats = self.get_solutions(self.part, self.error)
             self.state_counter = self.state_counter + 1
             # print(self.error, self.part, self.state_counter, self.df_stats)
@@ -206,6 +210,8 @@ class DialogueManager(Component):
             print(self.df_stats)
             print(self.state_counter)
             return self.thanks()
+        elif self.state == 'greating':
+            return "Please tell me more about your issue!"
 
     def excel_to_df(self):
         """
@@ -261,15 +267,17 @@ if __name__ == '__main__':
     input is a dictionary with three attributes: parts, error, states
     states[None=detect parts/error, yes/no=feedback from the user for the validity of the solution]
     """
-    """test for local file"""
-    input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
     m = DialogueManager()
+    """test for local file"""
+    """input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
+   
+    m.input_debug(input)
+    m.run()"""
+    input = {"parts": None, "error": None, "state": 'greating'}
     m.input_debug(input)
     m.run()
-    """input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing umbrella", "state": None}
-    m.input_debug(input)
-    m.run()
-    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "state": "yes"}
+    """
+    input = {"parts": "Tool magazine(Umbrella type)", "error": "Noise for tool changing", "state": "no"}
     m = DialogueManager()
     m.input_debug(input)
     m.run()"""
@@ -283,7 +291,7 @@ if __name__ == '__main__':
     
     user_input = 'The change 4 noise milling is not working.,,,'
     mergeprocess(natural_language, m, user_input)
-    user_input = 'no'
+    user_input = 'yes'
     mergeprocess(natural_language, m, user_input)
     """
 
