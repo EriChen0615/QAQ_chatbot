@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, json, jsonify
 import pandas as pd
 import dialogue_manager as dialogue_manager
-import dumb_nlu as dumb_nlu
+import NB_nlu as NB_nlu
 
 
 def get_faq(FILENAME):
@@ -40,7 +40,7 @@ def home():
     return render_template("side.html")
 
 
-nlu = dumb_nlu.Dumb_NLU()
+nlu = NB_nlu.NB_NLU()
 dl = dialogue_manager.DialogueManager()
 
 
@@ -51,7 +51,7 @@ def form_data():
     FILENAME = "doc/cnc_troubleshooting.xlsx"
     faq_list = get_faq(FILENAME)
 
-    return jsonify({'status': '0', 'msg': dialogue_manager.mergeprocess_fake(nlu, dl, txt), 'faq': faq_list})
+    return jsonify({'status': '0', 'msg': dialogue_manager.mergeprocess(nlu, dl, txt), 'faq': faq_list})
 
 
 if __name__ == '__main__':
