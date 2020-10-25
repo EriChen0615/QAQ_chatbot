@@ -252,7 +252,7 @@ class DialogueManager(Component):
         Add a new solution from user feedback if all the possible solutions are declined.
         """
         df = pd.read_excel(self.filename, 0)
-        df2 = pd.DataFrame([self.part,self.error,self.new_solution,0])
+        df2 = pd.DataFrame({"Parts":[self.part], "Error": [self.error], "Solution":[self.new_solution],"appear_time": [0]})
         df = df.append(df2, ignore_index=True)
 
         df.to_excel(self.filename, index=False)
