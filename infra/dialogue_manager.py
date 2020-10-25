@@ -177,16 +177,16 @@ class DialogueManager(Component):
             else:
                 return "Which part has this problem? Is it " + ','.join(candidates) + "?"
         elif not self.error:
-            self.df = self.excel_to_df()
             candidates = self.df.loc[(self.df['Parts'] == self.part)]
             candidates = candidates.Error.tolist()
             candidates = list(set(candidates))
+            print(candidates)
             if len(candidates) == 1:
                 self.error = candidates[0]
                 self.do_step()
                 return 0
             else:
-                return "What's the problem with " + self.part + "? Is " + ', '.join(candidates) + "?"
+                return "What's the problem with " + self.part + "? Is it"  + ','.join(candidates) + "?"
         else:
             return
 
@@ -269,11 +269,16 @@ if __name__ == '__main__':
     """
     m = DialogueManager()
     """test for local file"""
-    """input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
+    """input = {"parts": None, "error": "Noise for tool changing", "state": "no"}
    
     m.input_debug(input)
     m.run()"""
-    input = {"parts": None, "error": None, "state": 'greating'}
+    input = {"parts": None, "error": "Noise for tool changing", "state": 'no'}
+    m.input_debug(input)
+    m.run()
+
+    input = {"parts": "Tool magazine(Umbrella type)", "error": None, "state": 'no'}
+    m = DialogueManager()
     m.input_debug(input)
     m.run()
     """
