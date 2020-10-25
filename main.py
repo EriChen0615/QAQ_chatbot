@@ -5,6 +5,12 @@ import NB_nlu as NB_nlu
 
 
 def get_faq(FILENAME):
+    '''
+    This function get the FAQ list from the cnc_troubleshooting.xlsx file.
+    and return the list of errors in descending order of frequencies.
+    :param FILENAME: string
+    :return: re -> list
+    '''
     df = pd.read_excel(FILENAME)
 
     errors = {}
@@ -25,35 +31,34 @@ def get_faq(FILENAME):
 app = Flask(__name__)
 
 
+# main-page
 @app.route('/')
 def index():
     return render_template("index.html")
 
 
-@app.route('/dev')
-def dev():
-    return render_template("dev.html")
-
-
+# page with FAQ sidebar
 @app.route('/side')
 def home():
     return render_template("side.html")
 
 
+# initiate NLU operators
 nlu = NB_nlu.NB_NLU()
 dl = dialogue_manager.DialogueManager()
+FILENAME = "doc/cnc_troubleshooting.xlsx"
 
 
+# Handle AJAX request and interaction with javascript
 @app.route('/sendDate', methods=['GET', 'POST'])
 def form_data():
     msg = json.loads(list(request.form.lists())[0][0])
+    # Get the message sent by user
     txt = msg['query']
-    FILENAME = "doc/cnc_troubleshooting.xlsx"
     faq_list = get_faq(FILENAME)
 
-    return jsonify({'status': '0', 'msg': dialogue_manager.mergeprocess(nlu, dl, txt), 'faq': faq_list})
+    return jsonify({'msg': dialogue_manager.mergeprocess(nlu, dl, txt), 'faq': faq_list})
 
 
 if __name__ == '__main__':
-    # print(get_faq("doc/cnc_troubleshooting.xlsx"))
     app.run()

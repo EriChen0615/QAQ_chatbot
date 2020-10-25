@@ -386,8 +386,6 @@ function showLoading()
 
 	// $('#rec').css('visibility', 'hidden');
 	// $('textarea').css('visibility', 'hidden');
-
-	$('.chat-form').css('visibility', 'hidden');
  }
 
 
