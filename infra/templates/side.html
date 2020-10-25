@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>QAQ' chatbot</title>
+        <link rel="stylesheet" type="text/css" href="static/css/side.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+
+        <div id="container">
+
+            <div id="header">
+                <h1>Shoestring Hackathon Presentation</h1>
+            </div>
+
+            <div id="content">
+                <div id="FAQ">
+                    <div class="faqBar">
+                        <p class="title">FAQ</p>
+
+                    </div>
+
+                    <div class="fbox">
+                        <div class="faqLog" id="faqBox">
+                            <p>Hello! How can I help you today?</p>
+                            <p>Hello! How can I help you today?</p>
+                            <p>Hello! How can I help you today?</p>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="chatArea">
+
+                    <div class="headerBar">
+                        <div class="user-photo"><img src="static/images/bot.png"></div>
+                        <p class="title">QAQ'</p>
+                    </div>
+
+                    <div class="chatbox">
+                        <div class="chatlogs">
+
+                            <div class="chat friend">
+                                <div class="user-photo"><img src="static/images/bot.png"></div>
+                                <p class="chat-message">Hello! How can I help you today?</p>
+                            </div>
+
+                            <div class="chat friend" id="loadingGif" style="display: none;">
+                                <div class="user-photo"><img src="static/images/bot.png"></div>
+                                <div class="gif"><img src="static/images/loading.gif"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="chat-form">
+                        <div id="inputDiv">
+                            <div id="buttonDiv"></div>
+                            <textarea class="input" placeholder="Message" rows="1" data-min-rows='1'></textarea>
+                        </div>
+                        <div id="chat-form-buttons">
+                            <input type ="image"id="rec" src="static/images/microphone.png" onclick="image(this)">
+                            <input type="image" src="static/images/keyboard.png" id="switchInputType"/>
+                        </div>
+                    </div>
+                    <div style="width: 500px;">
+                        <canvas id="myChart" style="width:400px; height:800px;"     ></canvas>
+                    </div>
+
+                <script type="text/javascript" src="static/js/side.js"></script>
+            </div>
+
+            <div id="footer">
+                Copyright &copy; 2020 QAQ'
+            </div>
+            </div>
+        </div>
+
+    </body>
+
+</html>

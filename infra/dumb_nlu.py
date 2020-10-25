@@ -105,8 +105,8 @@ class Dumb_NLU(NLU):
         return {'error': result_error_list[0], 'parts': result_part_list[0], 'state': intention}
         # return {'number':num, 'intent':intent}
 
-
-test = Dumb_NLU()
-text = 'The change 4 noise milling is not working.,,,'
-dict=test.process(text)
-print(dict)
+if __name__=='__main__':
+    test = Dumb_NLU()
+    text = 'The change 4 noise milling is not working.,,,'
+    dict=test.process(text)
+    print(dict)
