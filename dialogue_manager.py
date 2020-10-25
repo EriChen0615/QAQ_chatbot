@@ -143,7 +143,7 @@ class DialogueManager(Component):
         # print(self.part, self.error, self.state_counter)
         i = 1
         while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[
-            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
+            i, 'Solution'] != self.df_stats[self.state_counter - 2]:
             i += 1
         self.df.loc[i, 'appear_time'] += 1
         self.df.to_excel(self.filename, sheet_name='Sheet1', index=False, header=True)

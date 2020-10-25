@@ -17,10 +17,10 @@ def get_faq(FILENAME):
 
     for index, row in df.iterrows():
         row = row.to_list()
-        if row[14] in errors:
-            errors[row[14]] += row[-1]
+        if row[1] in errors:
+            errors[row[1]] += row[-1]
         else:
-            errors[row[14]] = 0
+            errors[row[1]] = 0
 
     res = [i for i in errors.keys() if errors[i] > 0]
     res.sort(key=lambda x: errors[x], reverse=True)
@@ -46,7 +46,7 @@ def home():
 # initiate NLU operators
 nlu = NB_nlu.NB_NLU()
 dl = dialogue_manager.DialogueManager()
-FILENAME = "doc/cnc_troubleshooting.xlsx"
+FILENAME = "data/cnc_troubleshooting.xlsx"
 
 
 # Handle AJAX request and interaction with javascript
@@ -55,9 +55,9 @@ def form_data():
     msg = json.loads(list(request.form.lists())[0][0])
     # Get the message sent by user
     txt = msg['query']
+    msg = dialogue_manager.mergeprocess(nlu, dl, txt)
     faq_list = get_faq(FILENAME)
-
-    return jsonify({'msg': dialogue_manager.mergeprocess(nlu, dl, txt), 'faq': faq_list})
+    return jsonify({'msg': msg, 'faq': faq_list})
 
 
 if __name__ == '__main__':
