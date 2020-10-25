@@ -273,7 +273,7 @@ if __name__ == '__main__':
    
     m.input_debug(input)
     m.run()"""
-    input = {"parts": "Tool magazine (Umbrella type)", "error": "Noise for tool changing umbrella", "state": 'no'}
+    input = {"parts": "Tool magazine (Umbrella type)", "error": "Can't change the tool", "state": 'no'}
     m.input_debug(input)
     m.run()
     """
