@@ -9,7 +9,7 @@ We present QAQ' chatbot, a flexible chatbot system designed to make it easy to d
 
 ## Not sure? Try it!
 
-We provide a working example of diagnosis chatbot based on the CNC milling machine. You can check the manual [here](cnc_machine_troubleshooting_1.pdf). Run `main.py` and you should see a url where QAQ' is hosted. Ask away and see how QAQ' responds!
+We provide a working example of diagnosis chatbot based on the CNC milling machine. You can check the manual [here](doc/cnc_machine_troubleshooting_1.pdf). Run `main.py` and you should see a url where QAQ' is hosted. Ask away and see how QAQ' responds!
 
 ## More Information
 
