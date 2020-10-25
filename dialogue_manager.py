@@ -270,7 +270,7 @@ if __name__ == '__main__':
     m = DialogueManager()
     """test for local file"""
     """input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
-   
+
     m.input_debug(input)
     m.run()"""
     input = {"parts": None, "error": None, "state": 'greating'}

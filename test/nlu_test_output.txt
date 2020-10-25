@@ -1,0 +1,7 @@
+Tool magazine (Unbrella type), Noise for tool changing
+Tool magazine (Unbrella type), Tool number in chaos
+Tool magazine (Unbrella type), Tool magazine not drawing back
+Trouble Shoot (Arm type), Noise for tool changing
+Trouble Shoot (Arm type), Can't change the tool
+
+
