@@ -9,7 +9,7 @@ import re
 
 class NB_NLU(NLU):
 
-    error_probability_threshold = 0.75
+    error_probability_threshold = 0.3
 
     def makeErrorPartList(self):
         csvfilepath = 'data/error_keywords_1.csv'
