@@ -48,6 +48,8 @@ class DialogueManager(Component):
         self.df = self.excel_to_df()
         self.df_stats = []
         self.msg = ""
+        self.new_solution = ""
+
 
     def setup(self):
         pass
@@ -61,11 +63,13 @@ class DialogueManager(Component):
         :return: None
         """
         # print("Dialogue Manager is setup!")
-        if self.input["parts"]:
+        if "parts" in self.input and self.input['parts']:
             self.part = self.input["parts"]
-        if self.input["error"]:
+        if "error" in self.input and self.input['error']:
             self.error = self.input["error"]
         self.last_state = self.state
+        if "solution" in self.input:
+            self.new_solution = self.input["solution"]
         # print(self.input)
         self.state = self.input["state"]
         try:
@@ -105,7 +109,7 @@ class DialogueManager(Component):
         Additionally, if it is "yes", case closed and object inits itself.
         :return: response_msg to the UI
         """
-        if not self.part or not self.error or not self.state:
+        if ((not self.part or not self.error) and self.state == 'no') or not self.state:
             response_msg = self.trouble_shooting()
         else:
             response_msg = self.solution_provider()
@@ -138,12 +142,13 @@ class DialogueManager(Component):
         """
         # print(self.part, self.error, self.state_counter)
         i = 1
-        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[i, 'Solution'] != self.df_stats[self.state_counter - 1]:
+        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[
+            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
             i += 1
         self.df.loc[i, 'appear_time'] += 1
         self.df.to_excel(self.filename, sheet_name='Sheet1', index=False, header=True)
 
-        self.df.to_excel(self.filename)
+        self.df.to_excel(self.filename, index=False)
         # self.__init__()
         return "My pleasure."
 
@@ -162,7 +167,7 @@ class DialogueManager(Component):
         """
         if not self.state:
             return "I'm sorry, TROUBLE!!"
-        elif self.state == 'greating':
+        elif self.state == 'greeting':
             return "Please tell me more about your issue!"
         elif not self.part and not self.error:
             return "I'm sorry, I couldn't understand. Good luck :-D"
@@ -199,18 +204,24 @@ class DialogueManager(Component):
         :return: solution!
         """
         if self.state == "no":
-            self.df_stats = self.get_solutions(self.part, self.error)
+            if self.part and self.error:
+                self.df_stats = self.get_solutions(self.part, self.error)
             self.state_counter = self.state_counter + 1
             # print(self.error, self.part, self.state_counter, self.df_stats)
             if self.state_counter > len(self.df_stats):
                 # self.__init__()
-                return "Sorry, it is beyond my scope."  # provide user-defined manual
+                return "Sorry, it is beyond my scope. Please tell me how you solve this problem if possible, " \
+                       "so that I can help next time! $Enter your solution with the dollar signs$"  # provide
+                # user-defined manual
             return "Try to " + self.df_stats[self.state_counter - 1].lower() + ". Does it work?"
+        elif self.state == "solution":
+            self.study()
+            return "Thank you for your information!"
         elif self.state == "yes":
             print(self.df_stats)
             print(self.state_counter)
             return self.thanks()
-        elif self.state == 'greating':
+        elif self.state == 'greeting':
             return "Please tell me more about your issue!"
 
     def excel_to_df(self):
@@ -236,19 +247,15 @@ class DialogueManager(Component):
         """
         return self.read_sorted_solution(self.df, part, error)
 
-    def study(self, part, error, new_solution):
+    def study(self):
         """
         Add a new solution from user feedback if all the possible solutions are declined.
         """
         df = pd.read_excel(self.filename, 0)
-        i = 0
-        while self.df.loc[i, 'Parts'] != self.part or self.df.loc[i, 'Error'] != self.error or self.df.loc[
-            i, 'Solution'] != self.df_stats[self.state_counter - 1]:
-            i += 1
+        df2 = pd.DataFrame({"Parts":[self.part], "Error": [self.error], "Solution":[self.new_solution],"appear_time": [0]})
+        df = df.append(df2, ignore_index=True)
 
-        pd.DataFrame(np.insert(df.values, i + 1, values=[part, error, new_solution, 0], axis=0))
-
-        df.to_excel(self.filename)
+        df.to_excel(self.filename, index=False)
 
 
 def mergeprocess(nlu, m, text):
@@ -261,8 +268,9 @@ def mergeprocess(nlu, m, text):
         m.__init__()
     return console_msg
 
+
 def mergeprocess_fake(nlu, m, text):
-    input = {"parts": "Tool magazine (Umbrella type)", "error": None, "state": 'no'}
+    input = {"parts": "Tool magazine (Umbrella type)", "error": "Tool number in chaos", "state": 'study'}
     m.input_debug(input)
     m.run()
     console_msg = m.msg
@@ -282,7 +290,7 @@ if __name__ == '__main__':
 
     m.input_debug(input)
     m.run()"""
-    input = {"parts": "Tool magazine (Umbrella type)", "error": None, "state": 'no'}
+    input = {"parts": None, "error": None, "state": 'greeting'}
     m.input_debug(input)
     m.run()
     """
@@ -303,7 +311,6 @@ if __name__ == '__main__':
     user_input = 'yes'
     mergeprocess(natural_language, m, user_input)
     """
-
 
 """
 flow chart

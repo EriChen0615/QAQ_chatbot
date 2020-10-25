@@ -131,7 +131,7 @@ function send(text) {
 		
 		// Pass the response into the method
 		newRecievedMessage(data["msg"]);
-
+        console.log(data["msg"]);
 		},
 		error: function() {
 			newRecievedMessage("Internal Server Error");
@@ -377,7 +377,6 @@ function showLoading()
 	// $('#rec').css('visibility', 'hidden');
 	// $('textarea').css('visibility', 'hidden');
 
-	$('.chat-form').css('visibility', 'hidden');
  }
 
 

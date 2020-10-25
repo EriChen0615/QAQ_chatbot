@@ -109,7 +109,7 @@ class NB_NLU(NLU):
             else:
                 num_stemmed_text_list.append(0)
 
-        num_stemmed_text_list = np.reshape(num_stemmed_text_list, (1, 46))
+        num_stemmed_text_list = np.reshape(num_stemmed_text_list, (1, 52))
 
         result_list = num_stemmed_text_list.dot(self.probability_matrix)
         print(result_list)

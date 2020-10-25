@@ -7,7 +7,7 @@ import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 
 
-df = pd.read_csv('error_kws.csv')
+df = pd.read_csv('error_keywords_version_2.csv')
 
 df
 
@@ -37,7 +37,7 @@ stemmer = SnowballStemmer(language='english')
 
 p_mat.index = [stemmer.stem(w.lower()) for w in key_words]
 
-p_mat['Noise for tool changing umbrella']['nois']
+# p_mat['Noise for tool changing umbrella']['nois']
 
 len(key_words['noise'])
 
@@ -45,7 +45,7 @@ for w in key_words:
     for e in key_words[w]:
         p_mat[e][w] = 1/len(key_words[w])
 
-p_mat['Noise for tool changing umbrella']
+# p_mat['Noise for tool changing umbrella']
 
 
 p_mat
