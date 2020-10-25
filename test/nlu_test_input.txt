@@ -1,0 +1,5 @@
+The tool magazine is too noisy when changing the tool.
+The tool magazine's tool number is in chaos.
+The tool magazine is not drawing back
+The arm is too noisy when changing the tool
+I can't change the tool for the arm.

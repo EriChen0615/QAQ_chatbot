@@ -51,7 +51,7 @@ def form_data():
     FILENAME = "doc/cnc_troubleshooting.xlsx"
     faq_list = get_faq(FILENAME)
 
-    return jsonify({'status': '0', 'msg': dialogue_manager.mergeprocess(nlu, dl, txt), 'faq': faq_list})
+    return jsonify({'status': '0', 'msg': dialogue_manager.mergeprocess_fake(nlu, dl, txt), 'faq': faq_list})
 
 
 if __name__ == '__main__':

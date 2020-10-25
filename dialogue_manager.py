@@ -186,7 +186,7 @@ class DialogueManager(Component):
                 self.do_step()
                 return 0
             else:
-                return "What's the problem with " + self.part + "? Is " + ', '.join(candidates) + "?"
+                return "What's the problem with " + self.part + "? Is " + ', '.join(candidates).lower() + "?"
         else:
             return
 
@@ -261,6 +261,15 @@ def mergeprocess(nlu, m, text):
         m.__init__()
     return console_msg
 
+def mergeprocess_fake(nlu, m, text):
+    input = {"parts": "Tool magazine (Umbrella type)", "error": None, "state": 'no'}
+    m.input_debug(input)
+    m.run()
+    console_msg = m.msg
+    if console_msg == "Sorry, it is beyond my scope." or console_msg == "My pleasure.":
+        m.__init__()
+    return console_msg
+
 
 if __name__ == '__main__':
     """
@@ -270,10 +279,10 @@ if __name__ == '__main__':
     m = DialogueManager()
     """test for local file"""
     """input = {"parts": None, "error": "Noise for tool changing umbrella", "state": "no"}
-   
+
     m.input_debug(input)
     m.run()"""
-    input = {"parts": "Tool magazine (Umbrella type)", "error": "Can't change the tool", "state": 'no'}
+    input = {"parts": "Tool magazine (Umbrella type)", "error": None, "state": 'no'}
     m.input_debug(input)
     m.run()
     """
