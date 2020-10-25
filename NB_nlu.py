@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 import itertools
+import re
 
 
 class NB_NLU(NLU):
@@ -11,6 +12,7 @@ class NB_NLU(NLU):
         csvfilepath = 'data/error_keywords_1.csv'
         error_part_list = pd.read_csv(csvfilepath, sep=",", usecols=[2]).values.tolist()
         self.error_part_list = [item for sublist in error_part_list for item in sublist]
+        self.parts = set(self.error_part_list)
         # print(self.error_part_list)
         # print(len(self.error_part_list))
 
@@ -79,6 +81,12 @@ class NB_NLU(NLU):
 
         return 'no'
 
+    def get_parts(self, text):
+        if re.search(r'umbrella', text.lower()) or re.search(r'magazine', text.lower()):
+            return 'Tool magazine (Umbrella type)'
+        elif re.search('arm', text.lower()):
+            return 'Trouble Shoot (Arm type)'
+
     def process(self, text):
 
         text = text.replace(".", "")
@@ -100,26 +108,17 @@ class NB_NLU(NLU):
         num_stemmed_text_list = np.reshape(num_stemmed_text_list, (1, 46))
 
         result_list = num_stemmed_text_list.dot(self.probability_matrix)
-        # print(result_list)
+        print(result_list)
 
-        maximum = np.max(result_list)
+        error_id = np.argmax(result_list)
 
-        error_id = np.where(result_list == maximum)
-        error_id_list = [int(item) for sublist in error_id for item in sublist]
-
-        result_part_list = []
-        result_error_list = []
-
-        for id in error_id_list:
-            result_part_list.append(self.error_part_list[id])
-            result_error_list.append(self.error_list[id])
 
         # print(result_error_list)
         # print(result_part_list)
         intention = self.get_intent(text)
         if intention is None:
             intention = "trouble"
-        return {'error': result_error_list[0], 'parts': result_part_list[0], 'state': intention}
+        return {'error': self.error_list[error_id], 'parts': self.get_parts(text), 'state': intention}
         # return {'number':num, 'intent':intent}
 
 
@@ -133,13 +132,25 @@ if __name__ == '__main__':
     with open('test/nlu_test_output.txt', 'r') as f:
         for l in f.readlines():
             test_output.append(l.strip().split(', '))
-    print(test_input)
-    print(test_output)
+    #print(test_input)
+    #print(test_output)
     test = NB_NLU()
+    total_count = 0
+    false_count = 0
+    correct_count = 0
     for i in range(len(test_input)):
+        print("="*20)
+        print(f"Test case {i+1}")
         print(test_input[i])
         result = test.process(test_input[i])
+        print("NLU output", result)
         if (result['parts'] != test_output[i][0] or result['error'] != test_output[i][1]):
-                print(result, 'expected:', test_output[i])
+                print('Expected:', test_output[i])
+                false_count += 1
         else:
-            print(result, 'correct')
+            print('Correct')
+            correct_count += 1
+        print("="*20)
+        total_count += 1
+    print("Success rate", correct_count/total_count)
+
