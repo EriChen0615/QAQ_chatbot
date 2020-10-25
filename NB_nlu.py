@@ -61,7 +61,7 @@ class NB_NLU(NLU):
         intentions:
             - no
             - yes
-            - greating
+            - greeting
             - bypass
         :param text:
         :return:
@@ -76,14 +76,14 @@ class NB_NLU(NLU):
             if i in text:
                 return 'yes'
 
-        # If greating
+        # If greeting
         hi_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hi')))
         hello_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hello')))
         hey_list = map(''.join, itertools.product(*((c.upper(), c.lower()) for c in 'hello')))
-        greating_l = list(hi_list) + list(hello_list) + list(hey_list)
-        for i in greating_l:
+        greeting_l = list(hi_list) + list(hello_list) + list(hey_list)
+        for i in greeting_l:
             if i in text:
-                return 'greating'
+                return 'greeting'
 
         return 'no'
 
@@ -101,7 +101,7 @@ class NB_NLU(NLU):
             return {'solution': text, 'state': intention}
 
         stemmed_text_list = self.textPreprocess(text)
-
+        intention = self.get_intent(text)
         num_stemmed_text_list = []
         for keyword in self.keyword_list:
             if keyword in stemmed_text_list:
@@ -118,15 +118,13 @@ class NB_NLU(NLU):
         if np.argmax(result_list) >= self.error_probability_threshold:
              error_id = np.argmax(result_list)
 
-        intention = self.get_intent(text)
-        if intention is None:
+        if not intention:
             intention = "trouble"
 
-        if error_id!=None:
+        if error_id:
             return {'error': self.error_list[error_id], 'parts': self.get_parts(text), 'state': intention}
 
         return {'error': None, 'parts': None, 'state': intention}
-
 
 
 if __name__ == '__main__':
